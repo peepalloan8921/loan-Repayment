@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loan Repayment</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f3f7fb;color:#123}
+.card{max-width:430px;margin:30px auto;background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 28px #0001}
+h1{text-align:center;margin:0 0 8px;color:#0757a8}p{text-align:center;color:#667}
+label{display:block;margin:16px 0 6px;font-weight:700}
+input{width:100%;box-sizing:border-box;padding:13px;border:1px solid #ccd6e0;border-radius:10px;font-size:16px}
+button{width:100%;border:0;border-radius:10px;padding:14px;margin-top:18px;font-size:16px;font-weight:700;cursor:pointer}
+.pay{background:#168c45;color:white}.copy{background:#eaf2ff;color:#0757a8}
+.note{font-size:13px;margin-top:16px}.upi{text-align:center;font-weight:700;background:#f5f8fc;padding:12px;border-radius:10px;word-break:break-all}
+#status{margin-top:14px;text-align:center;font-weight:700}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Loan Repayment</h1>
+<p>Make your repayment using UPI</p>
+
+<label for="name">Customer Name</label>
+<input id="name" placeholder="Enter name">
+
+<label for="loan">Loan ID / Reference</label>
+<input id="loan" placeholder="Enter loan ID">
+
+<label for="amount">Repayment Amount (₹)</label>
+<input id="amount" type="number" min="1" step="0.01" placeholder="Enter amount">
+
+<div class="upi" id="upiText"></div>
+<button class="copy" onclick="copyUPI()">Copy UPI ID</button>
+<button class="pay" onclick="payNow()">Pay via UPI</button>
+
+<div id="status"></div>
+<p class="note">Before paying, verify the beneficiary name and UPI ID shown in your UPI app. This page does not independently verify successful payment.</p>
+</div>
+
+<script>
+// CHANGE ONLY THIS VALUE WHEN YOUR UPI ID CHANGES.
+const UPI_ID = "YOUR-UPI-ID@BANK";
+
+document.getElementById("upiText").textContent = UPI_ID;
+
+function copyUPI(){
+ navigator.clipboard?.writeText(UPI_ID);
+ document.getElementById("status").textContent="UPI ID copied.";
+}
+
+function payNow(){
+ const name=document.getElementById("name").value.trim();
+ const loan=document.getElementById("loan").value.trim();
+ const amount=parseFloat(document.getElementById("amount").value);
+ if(!name || !loan || !amount || amount<=0){
+   document.getElementById("status").textContent="Please enter name, loan ID and amount.";
+   return;
+ }
+ const note=`Loan Repayment - ${loan}`;
+ const url=`upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent("Loan Repayment")}&am=${encodeURIComponent(amount.toFixed(2))}&cu=INR&tn=${encodeURIComponent(note)}`;
+ window.location.href=url;
+}
+</script>
+</body>
+</html>
